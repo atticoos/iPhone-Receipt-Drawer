@@ -11,18 +11,6 @@ function fireUpCamera(){
 			var CreateWindow = require('ui/CreateReceiptWindow');
 			var createWin = new CreateWindow(event);
 			win.containingTab.open(createWin);
-			
-			
-			
-			/*
-			var imageView = Ti.UI.createImageView({
-					width: win.width,
-					height: win.height,
-					image: event.media
-			});
-			
-			win.add(imageView);
-			*/
 		},
 		cancel: function(){
 			cameraComplete = true;
@@ -31,7 +19,7 @@ function fireUpCamera(){
 			cameraComplete = true;
 		},
 		saveToPhotoGallery: true,
-		allowEditing: true,
+		allowEditing: false,
 		mediaTypes: [Ti.Media.MEDIA_TYPE_PHOTO]
 		
 	});

@@ -19,22 +19,22 @@ function ApplicationTabGroup() {
 	win1.containingTab = tab1;
 	
 	var tab2 = Ti.UI.createTab({
-		title: L('createReceipt'),
-		icon: '/images/KS_nav_views.png',
+		title: 'Dev tools',
+		icon: '/images/KS_nav_ui.png',
 		window: win2
 	});
 	win2.containingTab = tab2;
 	
 	var tab3 = Ti.UI.createTab({
 		title: 'Camera',
-		icon: 'images/KS_nav_ui.png',
+		icon: 'images/KS_nav_views.png',
 		window: win3
 	});
 	
 	
-	self.addTab(tab2);
 	self.addTab(tab1);
 	self.addTab(tab3);
+	self.addTab(tab2);
 	win3.containingTab = tab3;
 	
 	return self;

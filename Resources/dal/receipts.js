@@ -56,7 +56,15 @@ function createReceipt(receipt){
 
 
 function dumpDB(){
+	var imageStorage = require('dal/images');
+	var ImageStorageService = new imageStorage();
+	
 	var db = Ti.Database.open(DATABASE_NAME);
+	var receipts = getReceipts();
+	for (var i=0; i<receipts.length; i++){
+		ImageStorageService.deleteFile(receipts[i].image);
+	}
+	
 	db.execute("DELETE FROM receipts");
 	db.close();
 	return true;

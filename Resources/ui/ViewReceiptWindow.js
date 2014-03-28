@@ -1,4 +1,5 @@
 function ApplicationWindow(receipt){
+	Ti.API.log(receipt);
 	var win = Ti.UI.createWindow({
 		title: "View Receipt",
 		backgroundColor: 'white'
@@ -32,6 +33,20 @@ function ApplicationWindow(receipt){
 		textAlign: 'center'
 	});
 	win.add(total);
+	
+	
+	var imageView = Titanium.UI.createImageView({
+		id: 'receipt_image',
+		top: 120,
+		height: 180,
+		left: 10,
+		right: 10
+	});
+	win.add(imageView);
+	
+	win.addEventListener('open', function(){
+		imageView.setImage(receipt.getImage());
+	});
 	
 	
 	return win;

@@ -1,21 +1,27 @@
-function Receipt(properties){
-	this.id = properties.id;
-	this.name = properties.name;
-	this.category = properties.category;
-	this.date = properties.date;
-	this.total = properties.total;	
-	this.image = properties.image;
+function ImageStorageService( ){
+	
+	this.saveBlob = function( blob ){
+		var filename = "receipt_photo_" + new Date().getTime() + ".png";
+		var file = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, filename);
+		
+		file.write( blob );
+		Ti.API.info("Created file", filename);
+		return filename;
+	}
+	
+	this.deleteFile = function ( filename ){
+		var file = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, filename);
+		if (file.exists()){
+			Ti.API.log("Deleting", filename);
+			file.deleteFile();
+			return true;
+		}
+		return false;
+	}
 }
 
-Receipt.prototype.getImage = function(){
-	var path = Ti.Filesystem.applicationDataDirectory  + this.image;
-	Ti.API.info("IMAGE PATH", path);
-	return path;
-}
 
-
-
-module.exports = Receipt;
+module.exports = ImageStorageService;
 
 /*
 
@@ -58,6 +64,5 @@ module.exports = Receipt;
 		},
 		allowEditing:true
 	});
-
 
 */

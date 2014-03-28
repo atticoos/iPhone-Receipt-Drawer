@@ -45,7 +45,7 @@ function ApplicationWindow( image ){
 		borderRadius: 5,
 		left: 10, right: 10,
 		height: 100,
-		top: 130
+		top: nameView.height + nameView.top + 20
 	});
 	var totalLabel = Titanium.UI.createLabel({
 		color: '#000',
@@ -58,7 +58,8 @@ function ApplicationWindow( image ){
 		height: 35,
 		top: 40,
 		left: 10, right: 10,
-		borderStyle: Titanium.UI.INPUT_BORDERSTYLE_ROUNDED
+		borderStyle: Titanium.UI.INPUT_BORDERSTYLE_ROUNDED,
+		keyboardType: Titanium.UI.KEYBAORD_DECIMAL_PAD
 	});
 	totalView.add(totalLabel);
 	totalView.add(totalField);
@@ -70,7 +71,7 @@ function ApplicationWindow( image ){
 		backgroundColor: "#BBB",
 		borderRadius: 5,
 		left:10, right: 10,
-		top: 260,
+		top: totalView.top + totalView.height + 20,
 		height: 220
 		
 	});
@@ -95,7 +96,7 @@ function ApplicationWindow( image ){
 		backgroundColor: "#BBB",
 		borderRadius: 5,
 		left:10, right:10,
-		top: 560,
+		top: categoryView.top + categoryView.height + 20,
 		height: 220
 	});
 	var dateLabel = Titanium.UI.createLabel({
@@ -119,7 +120,7 @@ function ApplicationWindow( image ){
 		backgroundColor: "#BBB",
 		borderRadius: 5,
 		left: 10, right: 10,
-		top: 800,
+		top: dateView.top + dateView.height + 20,
 		height: 400
 	});
 	var imageLabel = Titanium.UI.createLabel({
@@ -133,10 +134,13 @@ function ApplicationWindow( image ){
 	var imageReceiptView = Ti.UI.createImageView({
 		left: 10, right: 10,
 		height: 280,
-		image: image ? image.media : null
 	});
 	imageView.add(imageReceiptView);
 	view.add(imageView);
+	
+	win.addEventListener('open', function(){
+		imageReceiptView.image = image ? image.media : null;
+	});
 	
 	
 	var createButton = Ti.UI.createButton({
@@ -144,16 +148,23 @@ function ApplicationWindow( image ){
 	});
 	
 	createButton.addEventListener('click', function(){
-		Ti.API.info("SAVING RECEIPT");
-		Ti.API.info(imageReceiptView.getImage());
-		return;
-		var receipt = {
+		var Receipt = require('entities/receipt');
+		var receipt = new Receipt({
 			name: nameField.value,
 			total: totalField.value,
 			category: categoryPicker.getSelectedRow(0).title,
-			date: new Date(categoryPicker.getValue()),
-			image: imageReceiptView.getImage()
+			date: new Date(categoryPicker.getValue())
+		});
+		
+		if ( image ){
+			var imageModule = require('dal/images');
+			var ImageStorageService = new imageModule();
+			
+			receipt.image = ImageStorageService.saveBlob( image.media );
+			
 		}
+		
+		
 		require('dal/receipts').createReceipt(receipt);
 		win.close();
 	});
