@@ -1,0 +1,2 @@
+CREATE TABLE IF NOT EXISTS receipts (id integer primary key, name text, total numeric, date text, category text);
+INSERT INTO receipts (name, total, date, category) VALUES ('First Receipt', '100.00', 'Fri Mar 28 2014 16:59:49 GMT-0400', 'Food');
