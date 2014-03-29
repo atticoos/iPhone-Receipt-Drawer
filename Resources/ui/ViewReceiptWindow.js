@@ -1,5 +1,6 @@
 function ApplicationWindow(args){
-	var self = this;
+	var self = this,
+		ModalImageView = require('ui/misc/ModalImageView');
 	this.receipt = args.receipt;
 	
 	Ti.API.log(self.receipt);
@@ -20,7 +21,7 @@ function ApplicationWindow(args){
 	
 	var category = Titanium.UI.createLabel({
 		id: 'receipt_category',
-		text: this.receipt.category,
+		text: this.receipt.category.name,
 		top: 40,
 		height: 20,
 		textAlign: 'center'
@@ -47,7 +48,7 @@ function ApplicationWindow(args){
 	win.add(date);
 	
 	
-	var imageView = Titanium.UI.createImageView({
+	var imageView = new ModalImageView({
 		id: 'receipt_image',
 		top: 150,
 		height: 180,

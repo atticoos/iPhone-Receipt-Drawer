@@ -1,13 +1,21 @@
 function ApplicationTabGroup() {
+
+	var ReceiptService = require('dal/receipts');
+	var CategoryService = require('dal/categories');
+	ReceiptService.install();
+	CategoryService.install();
+
+
 	//create module instance
 	var self = Ti.UI.createTabGroup(),
 		ListWindow = require('ui/ListReceiptsWindow'),
 		DevWindow = require('ui/DevWindow'),
-		CameraWindow = require('ui/CameraWindow');
+		SettingsWindow = require('ui/SettingsWindow');
 		
 	//create app tabs
 	var win1 = new ListWindow(),
-		win2 = new DevWindow();
+		win2 = new DevWindow(),
+		win3 = new SettingsWindow();
 		//win3 = new CameraWindow();
 		
 		
@@ -25,18 +33,16 @@ function ApplicationTabGroup() {
 	});
 	win2.containingTab = tab2;
 	
-	/*
 	var tab3 = Ti.UI.createTab({
-		title: 'Camera',
+		title: 'Settings',
 		icon: 'images/KS_nav_views.png',
 		window: win3
 	});
 	win3.containingTab = tab3;
-	*/
 	
 	self.addTab(tab1);
-	//self.addTab(tab3);
 	self.addTab(tab2);
+	self.addTab(tab3);
 	
 	
 	return self;

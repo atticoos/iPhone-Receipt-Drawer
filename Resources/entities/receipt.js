@@ -1,10 +1,12 @@
+var Category = require('entities/category');
 function Receipt(properties){
 	this.id = properties.id;
 	this.name = properties.name;
-	this.category = properties.category;
+	this.category = new Category( properties.category );
 	this.date = new Date(properties.date);
 	this.total = properties.total;	
 	this.image = properties.image;
+	this.person = properties.person;
 }
 
 Receipt.prototype.getImage = function(){
@@ -13,7 +15,9 @@ Receipt.prototype.getImage = function(){
 }
 
 Receipt.prototype.getDateString = function(){
-	return this.date.toLocaleDateString();
+	var d = new Date();
+	return (d.getMonth()+1) + "/" + d.getDate() + "/" + d.getFullYear();
+	//return this.date.toLocaleDateString();
 }
 
 

@@ -1,3 +1,8 @@
+var pickerSectionHeight = 280;
+var windowBG = "#eee";
+var sectionBG = "#fff";
+var ModalImageView = require('ui/misc/ModalImageView');
+
 function getOffset(){
 	return this.view.top + this.view.height;
 }
@@ -6,8 +11,8 @@ function PhotoSection( parent ){
 	var self = this;
 	this.image = false;
 	this.view = Titanium.UI.createView({
-		backgroundColor: "#BBB",
-		borderRadius: 5,
+		backgroundColor: sectionBG,
+		borderRadius: 0,
 		left: 10, right: 10, height: 80,
 		top: 10
 	});
@@ -20,13 +25,14 @@ function PhotoSection( parent ){
 	
 	this.photoButtonBar = Titanium.UI.createButtonBar({
 		labels: ['Camera', 'Gallery'],
-		backgroundColor: '#fff',
+		backgroundColor: 'gray',
+		color:'gray',
 		top: 40,
-		style: Ti.UI.iPhone.SystemButtonStyle.BAR,
+		style: Ti.UI.iPhone.SystemButtonStyle.BORDERED,
 		height: 30, left: 40, right: 40
 	});
 	
-	this.imageView = Titanium.UI.createImageView({
+	this.imageView = new ModalImageView({
 		left: 10, right: 10, height: 200,
 		top: 90
 	});
@@ -72,8 +78,8 @@ PhotoSection.prototype.getOffset = getOffset;
 
 function NameSection( offset ){
 	this.view = Titanium.UI.createView({
-		backgroundColor: "#BBB",
-		borderRadius: 5,
+		backgroundColor: sectionBG,
+		borderRadius: 0,
 		left:10, right: 10,
 		height: 100,
 		top: offset + 20
@@ -100,8 +106,8 @@ NameSection.prototype.getOffset = getOffset;
 
 function TotalSection( offset ){
 	this.view = Titanium.UI.createView({
-		backgroundColor: "#BBB",
-		borderRadius: 5,
+		backgroundColor: sectionBG,
+		borderRadius: 0,
 		left: 10, right: 10,
 		height: 100,
 		top: offset + 20
@@ -127,11 +133,11 @@ TotalSection.prototype.getOffset = getOffset;
 
 function CategorySection( offset ){
 	this.view = Ti.UI.createView({
-		backgroundColor: "#BBB",
-		borderRadius: 5,
+		backgroundColor: sectionBG,
+		borderRadius: 0,
 		left:10, right: 10,
 		top: offset + 20,
-		height: 250
+		height: pickerSectionHeight
 		
 	});
 	this.categoryLabel = Titanium.UI.createLabel({
@@ -142,6 +148,7 @@ function CategorySection( offset ){
 		text: "Category"
 	});
 	this.categoryPicker = createCategoryPicker({
+		backgroundColor: "#BBB",
 		top: 40,
 		left:10, right: 10,
 	});
@@ -153,11 +160,11 @@ CategorySection.prototype.getOffset = getOffset;
 function DateSection( offset ){
 	
 	this.view = Ti.UI.createView({
-		backgroundColor: "#BBB",
-		borderRadius: 5,
+		backgroundColor: sectionBG,
+		borderRadius: 0,
 		left:10, right:10,
 		top: offset + 20,
-		height: 250
+		height: pickerSectionHeight
 	});
 	this.dateLabel = Titanium.UI.createLabel({
 		color:'#000',
@@ -177,46 +184,111 @@ DateSection.prototype.getOffset = getOffset;
 
 function PersonSection ( offset ){
 	this.view = Ti.UI.createView({
-		backgroundColor:"#888",
-		borderRadius: 5, 
+		backgroundColor:sectionBG,
+		borderRadius: 0, 
 		left: 10, right: 10,
 		top: offset + 20,
-		height: 250
+		height: 150
 	});
 	
 	this.label = Ti.UI.createLabel({
 		text: "Who paid?",
 		color:'#000',
 		height: 20,
-		top: 10, left: 10, right: 10
+		top: 10, left: 10, right: 10,
+		zIndex: 5
 	});
 	
+	
+	var optionView = Ti.UI.createView({
+		top: 40,
+		left: 80,
+		right:80,
+		height: 50
+	});
+	
+	var optionA = Ti.UI.createView({
+		left: 0,
+		top:0, height:50,
+		width: 50,
+		backgroundColor:'pink',
+		borderWidth:3,
+		borderColor:'pink'
+	});
+	var optionALabel = Ti.UI.createLabel({
+		text: "G", top:5, color:"#fff", left:0, right:0,
+		textAlign:'center',
+		font: {fontSize: 32, fontWeight:"bold"}
+	});
+	
+	optionA.add(optionALabel);
+	optionView.add(optionA);
+	
+	
+	var optionB = Ti.UI.createView({
+		right: 0,
+		top:0, height:50,
+		width: 50,
+		backgroundColor:'blue',
+		borderWidth: 3,
+		borderColor: 'blue'
+	});
+	var optionBLabel = Ti.UI.createLabel({
+		text: "B", top:5, color:"#fff", left:0, right:0,
+		textAlign:'center',
+		font: {fontSize: 32, fontWeight:"bold"}
+	});
+	
+	optionB.add(optionBLabel);
+	optionView.add(optionB);
+	
+	this.view.add(optionView);
+
+		
+	this.getSelectedPerson = function(){
+		return "A";
+	};
+	
+	optionA.addEventListener('click', function(){
+		optionA.borderColor="#eee";
+		optionA.borderWidth=3
+		optionB.borderColor=optionB.backgroundColor;
+	});
+	optionB.addEventListener('click', function(){
+		optionB.borderColor="#eee";
+		optionB.borderWidth=3
+		optionA.borderColor = optionA.backgroundColor;
+	});
+	
+	
+	/*
 
 	var pickerOptions = [
 		Ti.UI.createPickerRow({title: 'Gabrielle'}),
 		Ti.UI.createPickerRow({title: "Atticus"})
 	];
 	this.picker =  Ti.UI.createPicker({
-		top: 40,
+		top: -20,
 		left: 10,
 		right: 10,
-		height: 40
+		height: 40,
+		zIndex: 2
 	});
 	this.picker.selectionIndicator=true;
 	
 	this.picker.add(pickerOptions);
 	this.picker.setSelectedRow(0, 2, true);
-	
+	this.view.add(this.picker);
+	*/
 		
 	this.view.add(this.label);
-	this.view.add(this.picker);
 }
 
 function ApplicationWindow( ){
 	var self = this;
 	this.win = Ti.UI.createWindow({
 		title: L('createReceipt'),
-		backgroundColor: 'white'
+		backgroundColor: windowBG
 	});
 	
 	this.view = Ti.UI.createScrollView({
@@ -248,7 +320,7 @@ function ApplicationWindow( ){
 	
 	
 	
-	this.view.addEventListener('scroll', function(){
+	this.view.addEventListener('dragstart', function(){
 		self.nameSection.nameField.blur();
 		self.totalSection.totalField.blur();
 	});
@@ -320,16 +392,14 @@ function CreateWindow(){
 		win.setRightNavButton(navActInd);
 		navActInd.show();
 	
-	
-	
-	
 		var Receipt = require('entities/receipt');
-		var receipt = new Receipt({
+		var receipt = {
 			name: ReceiptWindow.nameSection.nameField.value,
 			total: ReceiptWindow.totalSection.totalField.value,
-			category: ReceiptWindow.categorySection.categoryPicker.getSelectedRow(0).title,
-			date: new Date(ReceiptWindow.dateSection.datePicker.getValue())
-		});
+			category: ReceiptWindow.categorySection.categoryPicker.getSelectedRow(0).id,
+			date: new Date(ReceiptWindow.dateSection.datePicker.getValue()),
+			person: "A" //ReceiptWindow.personSection.picker.getSelectedRow(0).title
+		};
 		
 		if ( ReceiptWindow.photoSection.image ){
 			var imageModule = require('dal/images');
@@ -356,10 +426,10 @@ function CreateWindow(){
 
 
 function createCategoryPicker(position){
-	var categories = require('dal/receipts').getCategories(),
+	var categories = require('dal/categories').getCategories(),
 		data = [];
 	for (var i=0; i<categories.length; i++){
-		var categoryItem = Ti.UI.createPickerRow({title: categories[i]});
+		var categoryItem = Ti.UI.createPickerRow({title: categories[i].name, id:categories[i].id});
 		data.push(categoryItem);
 	}
 	var picker = Ti.UI.createPicker({

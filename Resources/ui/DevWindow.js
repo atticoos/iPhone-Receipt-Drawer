@@ -36,14 +36,15 @@ function ApplicationWindow(){
 		height: 30
 	});
 	installDB.addEventListener('click', function(){
-		var db = require('dal/receipts');
+		var receipts = require('dal/receipts');
+		var categories = require('dal/categories');
 		var alert = Ti.UI.createAlertDialog({
 			title: 'Creating DB',
 			message: 'Creation complete'
 		});
-		if (db.install()){
-			alert.show();
-		}
+		categories.install();
+		receipts.install();
+		alert.show();
 	});
 	view.add(installDB);
 	
