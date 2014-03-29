@@ -1,10 +1,10 @@
 function ApplicationTabGroup() {
-
+/*
 	var ReceiptService = require('dal/receipts');
 	var CategoryService = require('dal/categories');
 	ReceiptService.install();
 	CategoryService.install();
-
+*/
 
 	//create module instance
 	var self = Ti.UI.createTabGroup(),
