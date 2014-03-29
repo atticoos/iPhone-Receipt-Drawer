@@ -7,9 +7,6 @@ function install(){
 	Ti.API.info("Creating database...");
 	db.execute("DROP TABLE IF EXISTS receipts");
 	db.execute("CREATE TABLE IF NOT EXISTS receipts (id integer primary key, name text, total numeric, category text, date text, image text)");
-	
-	//Ti.API.info("Creating table if not exists");
-	//db.execute("INSERT INTO receipts (name, total, date, category) VALUES ('First Receipt', '100.00', 'Fri Mar 28 2014 16:59:49 GMT-0400', 'Food')");
 }
 //install();
 
@@ -42,6 +39,7 @@ function getCategories() {
 	return categories;
 }
 
+
 function createReceipt(receipt){
 	var db = Ti.Database.open(DATABASE_NAME);
 	db.execute("INSERT INTO receipts (name, total, date, category, image) values (?,?,?,?, ?)", 
@@ -51,6 +49,26 @@ function createReceipt(receipt){
 		receipt.category,
 		receipt.image
 	);
+	db.close();
+}
+
+function updateReceipt( receipt ){
+	var db = Ti.Database.open(DATABASE_NAME);
+	Ti.API.info("UPDATING RECEIPT", receipt);
+	db.execute("UPDATE receipts set name = ?, total = ?, category = ?, date = ?, image = ? WHERE id = ?", 
+		receipt.name,
+		receipt.total,
+		receipt.category,
+		receipt.date,
+		receipt.image,
+		receipt.id
+	);
+	db.close();
+}
+
+function deleteReceipt( receiptID ){
+	var db = Ti.Database.open(DATABASE_NAME);
+	db.execute("DELETE FROM receipts WHERE id = ?", receiptID);
 	db.close();
 }
 
@@ -74,6 +92,8 @@ module.exports = {
 	createReceipt: createReceipt,
 	getCategories: getCategories,
 	getReceipts: getReceipts,
+	deleteReceipt: deleteReceipt,
+	updateReceipt: updateReceipt,
 	
 	
 	// DEV TOOLS

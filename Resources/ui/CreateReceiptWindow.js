@@ -1,166 +1,341 @@
-function ApplicationWindow( image ){
-	var win = Ti.UI.createWindow({
-		title: L('createReceipt'),
-		backgroundColor: 'white'
+function getOffset(){
+	return this.view.top + this.view.height;
+}
+
+function PhotoSection( parent ){
+	var self = this;
+	this.image = false;
+	this.view = Titanium.UI.createView({
+		backgroundColor: "#BBB",
+		borderRadius: 5,
+		left: 10, right: 10, height: 80,
+		top: 10
+	});
+	this.photoLabel = Titanium.UI.createLabel({
+		color:"#000",
+		left: 10, right: 10, top: 10,
+		height: 20,
+		text: "Receipt Photo"
 	});
 	
-	var view = Ti.UI.createScrollView({
-		top:0,
-		contentWidth: 'auto',
-		contentHeight: 'auto'
+	this.photoButtonBar = Titanium.UI.createButtonBar({
+		labels: ['Camera', 'Gallery'],
+		backgroundColor: '#fff',
+		top: 40,
+		style: Ti.UI.iPhone.SystemButtonStyle.BAR,
+		height: 30, left: 40, right: 40
 	});
 	
+	this.imageView = Titanium.UI.createImageView({
+		left: 10, right: 10, height: 200,
+		top: 90
+	});
 	
-	/** NAME SECTION **/
-	var nameView = Titanium.UI.createView({
+	this.setImage = function ( image ){
+		self.imageView.setImage(image);
+		self.image = image;
+		self.view.setHeight(300);
+		parent.adjustOffsets();
+	}
+	
+	this.photoButtonBar.addEventListener('click', function(e){
+		if (e.index == 0){
+			Titanium.Media.showCamera({
+				success: function(event){
+					self.setImage(event.media);
+				},
+				cancel: function(){},
+				error: function(){},
+				saveToPhotoGallery: true,
+				allowEditing: false,
+				mediaTypes: [Ti.Media.MEDIA_TYPE_PHOTO]
+				
+			});
+		} else {
+			Titanium.Media.openPhotoGallery({
+				success: function(event){
+					self.setImage(event.media);
+				},
+				cancel: function(){},
+				error: function(){},
+				allowEditing: false,
+				mediaType: [Ti.Media.MEDIA_TYPE_PHOTO]
+			});
+		}
+	});
+	
+	this.view.add(this.photoLabel);
+	this.view.add(this.photoButtonBar);
+	this.view.add(this.imageView);
+}
+PhotoSection.prototype.getOffset = getOffset;
+
+function NameSection( offset ){
+	this.view = Titanium.UI.createView({
 		backgroundColor: "#BBB",
 		borderRadius: 5,
 		left:10, right: 10,
 		height: 100,
-		top: 10
+		top: offset + 20
 		
 	});
-	var nameLabel = Titanium.UI.createLabel({
+	this.nameLabel = Titanium.UI.createLabel({
 		color:"#000",
 		left:10, right: 10, top:10,
 		height: 20,
 		text: "Name"
 		
 	});
-	var nameField = Titanium.UI.createTextField({
+	this.nameField = Titanium.UI.createTextField({
 		color:'#336699',
 		height:35,
 		top: 40,
 		left:10, right:10,
 		borderStyle:Titanium.UI.INPUT_BORDERSTYLE_ROUNDED
 	});
-	nameView.add(nameLabel);
-	nameView.add(nameField);
-	view.add(nameView);
-	
-	
-	/** TOTAL SECTION **/
-	var totalView = Titanium.UI.createView({
+	this.view.add(this.nameLabel);
+	this.view.add(this.nameField);
+}
+NameSection.prototype.getOffset = getOffset;
+
+function TotalSection( offset ){
+	this.view = Titanium.UI.createView({
 		backgroundColor: "#BBB",
 		borderRadius: 5,
 		left: 10, right: 10,
 		height: 100,
-		top: nameView.height + nameView.top + 20
+		top: offset + 20
 	});
-	var totalLabel = Titanium.UI.createLabel({
+	this.totalLabel = Titanium.UI.createLabel({
 		color: '#000',
 		left: 10, right: 10, top:10,
 		height: 20,
 		text: "Total"
 	});
-	var totalField = Titanium.UI.createTextField({
+	this.totalField = Titanium.UI.createTextField({
 		color: '#336699',
 		height: 35,
 		top: 40,
 		left: 10, right: 10,
 		borderStyle: Titanium.UI.INPUT_BORDERSTYLE_ROUNDED,
-		keyboardType: Titanium.UI.KEYBAORD_DECIMAL_PAD
+		keyboardType: Titanium.UI.KEYBOARD_DECIMAL_PAD
 	});
-	totalView.add(totalLabel);
-	totalView.add(totalField);
-	view.add(totalView);
+	this.view.add(this.totalLabel);
+	this.view.add(this.totalField);
+}
+TotalSection.prototype.getOffset = getOffset;
 
-	
-	/** CATEGORY SECTION **/
-	var categoryView = Ti.UI.createView({
+function CategorySection( offset ){
+	this.view = Ti.UI.createView({
 		backgroundColor: "#BBB",
 		borderRadius: 5,
 		left:10, right: 10,
-		top: totalView.top + totalView.height + 20,
-		height: 220
+		top: offset + 20,
+		height: 250
 		
 	});
-	var categoryLabel = Titanium.UI.createLabel({
+	this.categoryLabel = Titanium.UI.createLabel({
 		color: '#000',
 		height: 20,
 		top: 10,
 		left:10, right:10,
 		text: "Category"
 	});
-	var categoryPicker = createCategoryPicker({
+	this.categoryPicker = createCategoryPicker({
 		top: 40,
 		left:10, right: 10,
 	});
-	categoryView.add(categoryLabel);
-	categoryView.add(categoryPicker);
-	view.add(categoryView);
+	this.view.add(this.categoryLabel);
+	this.view.add(this.categoryPicker);
+}
+CategorySection.prototype.getOffset = getOffset;
+
+function DateSection( offset ){
 	
-	
-	/** DATE SECTION **/
-	var dateView = Ti.UI.createView({
+	this.view = Ti.UI.createView({
 		backgroundColor: "#BBB",
 		borderRadius: 5,
 		left:10, right:10,
-		top: categoryView.top + categoryView.height + 20,
-		height: 220
+		top: offset + 20,
+		height: 250
 	});
-	var dateLabel = Titanium.UI.createLabel({
+	this.dateLabel = Titanium.UI.createLabel({
 		color:'#000',
 		height: 20,
 		top: 10,
 		left:10, right:10,
 		text: "Date"
 	});
-	var datePicker = createDatePicker({
+	this.datePicker = createDatePicker({
 		top: 40,
 		left:10, right:10
 	});
-	dateView.add(dateLabel);
-	dateView.add(datePicker);
-	view.add(dateView);
-	
-	
-	/** IMAGE SECTION **/
-	var imageView = Ti.UI.createView({
-		backgroundColor: "#BBB",
-		borderRadius: 5,
+	this.view.add(this.dateLabel);
+	this.view.add(this.datePicker);
+}
+DateSection.prototype.getOffset = getOffset;
+
+function PersonSection ( offset ){
+	this.view = Ti.UI.createView({
+		backgroundColor:"#888",
+		borderRadius: 5, 
 		left: 10, right: 10,
-		top: dateView.top + dateView.height + 20,
-		height: 400
+		top: offset + 20,
+		height: 250
 	});
-	var imageLabel = Titanium.UI.createLabel({
-		color:"#000",
+	
+	this.label = Ti.UI.createLabel({
+		text: "Who paid?",
+		color:'#000',
 		height: 20,
-		top: 10, left:10, right: 10,
-		text: "Receipt Image"
-	});
-	imageView.add(imageLabel);
-	
-	var imageReceiptView = Ti.UI.createImageView({
-		left: 10, right: 10,
-		height: 280,
-	});
-	imageView.add(imageReceiptView);
-	view.add(imageView);
-	
-	win.addEventListener('open', function(){
-		imageReceiptView.image = image ? image.media : null;
+		top: 10, left: 10, right: 10
 	});
 	
+
+	var pickerOptions = [
+		Ti.UI.createPickerRow({title: 'Gabrielle'}),
+		Ti.UI.createPickerRow({title: "Atticus"})
+	];
+	this.picker =  Ti.UI.createPicker({
+		top: 40,
+		left: 10,
+		right: 10,
+		height: 40
+	});
+	this.picker.selectionIndicator=true;
+	
+	this.picker.add(pickerOptions);
+	this.picker.setSelectedRow(0, 2, true);
+	
+		
+	this.view.add(this.label);
+	this.view.add(this.picker);
+}
+
+function ApplicationWindow( ){
+	var self = this;
+	this.win = Ti.UI.createWindow({
+		title: L('createReceipt'),
+		backgroundColor: 'white'
+	});
+	
+	this.view = Ti.UI.createScrollView({
+		top:0,
+		contentWidth: 'auto',
+		contentHeight: 'auto'
+	});
+	
+	this.photoSection = new PhotoSection( this );
+	this.view.add(this.photoSection.view);
+	
+	this.nameSection = new NameSection( this.photoSection.getOffset() );
+	this.view.add(this.nameSection.view);
+	
+	
+	this.totalSection = new TotalSection( this.nameSection.getOffset() );
+	this.view.add(this.totalSection.view);
+
+	
+	this.categorySection = new CategorySection( this.totalSection.getOffset() );
+	this.view.add(this.categorySection.view);
+	
+	
+	this.dateSection = new DateSection( this.categorySection.getOffset() );
+	this.view.add(this.dateSection.view);
+	
+	this.personSection = new PersonSection( this.dateSection.getOffset() );
+	this.view.add(this.personSection.view);
+	
+	
+	
+	this.view.addEventListener('scroll', function(){
+		self.nameSection.nameField.blur();
+		self.totalSection.totalField.blur();
+	});
+	
+	
+	this.adjustOffsets = function(){
+		var sections = [this.photoSection, this.nameSection, this.totalSection, this.categorySection, this.dateSection, this.personSection];
+		for (var i=1; i<sections.length; i++){
+			sections[i].view.top = sections[i-1].getOffset() + 20;
+		}
+	}
+	
+		
+	
+	this.win.add(this.view);
+};
+
+
+function EditWindow( args ){
+	var ReceiptWindow = new ApplicationWindow();
+	var win = ReceiptWindow.win;
+	var receipt = args.receipt;
+	
+	ReceiptWindow.photoSection.setImage(receipt.getImage());
+	ReceiptWindow.nameSection.nameField.setValue(receipt.name);
+	ReceiptWindow.totalSection.totalField.setValue(receipt.total);
+	
+	
+	var saveButton = Ti.UI.createButton({
+		systemButton: Titanium.UI.iPhone.SystemButton.SAVE
+	});
+	
+	saveButton.addEventListener('click', function(){
+		var navActInd = Ti.UI.createActivityIndicator({
+			style: Titanium.UI.iPhone.ActivityIndicatorStyle.DARK
+		});
+		win.setRightNavButton(navActInd);
+		navActInd.show();
+		
+		receipt.name = ReceiptWindow.nameSection.nameField.getValue();
+		receipt.total = ReceiptWindow.totalSection.totalField.getValue();
+		
+		
+		var ReceiptService = require('dal/receipts');
+		ReceiptService.updateReceipt(receipt);
+		args.parent.receipt = receipt;
+		win.close();
+		
+	});
+	win.rightNavButton = saveButton;
+	
+	
+	
+	return win;
+}
+
+function CreateWindow(){
+	var ReceiptWindow = new ApplicationWindow();
+	var win = ReceiptWindow.win;
 	
 	var createButton = Ti.UI.createButton({
 		title: "Create"
 	});
 	
 	createButton.addEventListener('click', function(){
+		var navActInd = Ti.UI.createActivityIndicator({
+			style: Titanium.UI.iPhone.ActivityIndicatorStyle.DARK
+		});
+		win.setRightNavButton(navActInd);
+		navActInd.show();
+	
+	
+	
+	
 		var Receipt = require('entities/receipt');
 		var receipt = new Receipt({
-			name: nameField.value,
-			total: totalField.value,
-			category: categoryPicker.getSelectedRow(0).title,
-			date: new Date(categoryPicker.getValue())
+			name: ReceiptWindow.nameSection.nameField.value,
+			total: ReceiptWindow.totalSection.totalField.value,
+			category: ReceiptWindow.categorySection.categoryPicker.getSelectedRow(0).title,
+			date: new Date(ReceiptWindow.dateSection.datePicker.getValue())
 		});
 		
-		if ( image ){
+		if ( ReceiptWindow.photoSection.image ){
 			var imageModule = require('dal/images');
 			var ImageStorageService = new imageModule();
 			
-			receipt.image = ImageStorageService.saveBlob( image.media );
+			receipt.image = ImageStorageService.saveBlob( ReceiptWindow.photoSection.image );
 			
 		}
 		
@@ -170,13 +345,11 @@ function ApplicationWindow( image ){
 	});
 	
 	win.rightNavButton = createButton;
+
 	
 	
-	win.add(view);
 	return win;
-};
-
-
+}
 
 
 
@@ -213,4 +386,7 @@ function createDatePicker(position){
 }
 
 
-module.exports = ApplicationWindow;
+module.exports = {
+	create: CreateWindow,
+	edit: EditWindow
+}

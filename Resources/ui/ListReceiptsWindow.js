@@ -5,14 +5,16 @@ function ApplicationWindow(title) {
 	});
 	
 
-	var tableView = Ti.UI.createTableView(),
-		addButton = Ti.UI.createButton({
-			systemButton: Titanium.UI.iPhone.SystemButton.ADD	
-		});
+	var tableView = Ti.UI.createTableView({
+		editable: true
+	});
+	var addButton = Ti.UI.createButton({
+		systemButton: Titanium.UI.iPhone.SystemButton.ADD	
+	});
 		
 	addButton.addEventListener('click', function(){
-		var CreateReceiptWindow = require('ui/CreateReceiptWindow'),
-			createWin = new CreateReceiptWindow();
+		var ReceiptWindow = require('ui/CreateReceiptWindow'),
+			createWin = new ReceiptWindow.create();
 		win.containingTab.open(createWin);
 	});
 	
@@ -22,8 +24,16 @@ function ApplicationWindow(title) {
 	
 	tableView.addEventListener('click', function(e){
 		var ViewReceiptWindow = require('ui/ViewReceiptWindow'),
-			receiptWin = new ViewReceiptWindow(e.rowData.receipt);
+			receiptWin = new ViewReceiptWindow({ 
+				receipt: e.rowData.receipt,
+				containingTab: win.containingTab,
+				tabGroup: win.tabGroup
+			});
 		win.containingTab.open(receiptWin);
+	});
+	tableView.addEventListener('delete', function(e){
+		var receiptService = require('dal/receipts');
+		receiptService.deleteReceipt(e.rowData.id);
 	});
 	win.add(tableView);
 	
@@ -43,10 +53,33 @@ function getTableData(){
 		var receipt = receipts[i];
 		var row = Ti.UI.createTableViewRow({
 			id: receipt.id,
-			title: receipt.name,
-			color: "#000",
-			receipt: receipt
+			receipt: receipt,
+			height: 50
 		});
+		
+		var rowView = Ti.UI.createView({
+			left: 10, right: 10, top:10, bottom:10
+		});
+		
+		var title = Ti.UI.createLabel({
+			text: receipt.name,
+			left:0, top:0, color:'#000',
+			font: { fontSize: 12 }
+		});
+		
+		var category = Ti.UI.createLabel({
+			text: receipt.category,
+			top:0, right:0, 
+			font: { fontSize: 10 },
+			color:'#000'
+		});
+		
+		rowView.add(title);
+		rowView.add(category);
+		row.add(rowView);
+		
+		
+		
 		data.push(row);
 	}
 	return data;

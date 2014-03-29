@@ -7,8 +7,8 @@ function ApplicationTabGroup() {
 		
 	//create app tabs
 	var win1 = new ListWindow(),
-		win2 = new DevWindow(),
-		win3 = new CameraWindow();
+		win2 = new DevWindow();
+		//win3 = new CameraWindow();
 		
 		
 	var tab1 = Ti.UI.createTab({
@@ -25,17 +25,19 @@ function ApplicationTabGroup() {
 	});
 	win2.containingTab = tab2;
 	
+	/*
 	var tab3 = Ti.UI.createTab({
 		title: 'Camera',
 		icon: 'images/KS_nav_views.png',
 		window: win3
 	});
-	
+	win3.containingTab = tab3;
+	*/
 	
 	self.addTab(tab1);
-	self.addTab(tab3);
+	//self.addTab(tab3);
 	self.addTab(tab2);
-	win3.containingTab = tab3;
+	
 	
 	return self;
 };

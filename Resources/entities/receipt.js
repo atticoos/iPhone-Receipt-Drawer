@@ -2,15 +2,18 @@ function Receipt(properties){
 	this.id = properties.id;
 	this.name = properties.name;
 	this.category = properties.category;
-	this.date = properties.date;
+	this.date = new Date(properties.date);
 	this.total = properties.total;	
 	this.image = properties.image;
 }
 
 Receipt.prototype.getImage = function(){
 	var path = Ti.Filesystem.applicationDataDirectory  + this.image;
-	Ti.API.info("IMAGE PATH", path);
 	return path;
+}
+
+Receipt.prototype.getDateString = function(){
+	return this.date.toLocaleDateString();
 }
 
 
