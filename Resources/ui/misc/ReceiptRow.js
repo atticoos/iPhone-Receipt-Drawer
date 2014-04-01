@@ -4,16 +4,17 @@ function ReceiptRow( receipt ){
 		id: receipt.id,
 		receipt: receipt,
 		left:0, right:0,
-		height: 60
+		height: 58
 	});
-	
+
+
 	var rowView = Ti.UI.createView({
-		left: 5, right: 5, top:5, bottom:5,
+		left: 65, right: 10, top:5, bottom:5,
 		backgroundColor:"#fff"
 	});
 	
 	var detailView = Ti.UI.createView({
-		left: 60, top:5, bottom:5, right: 10
+		left: 5, top:5, bottom:5, right: 5,
 	});
 
 	var category = Ti.UI.createLabel({
@@ -42,20 +43,28 @@ function ReceiptRow( receipt ){
 		backgroundColor:"pink"
 	});
 	
+	var categoryImage = Ti.UI.createImageView({
+		image: receipt.venue.icon,
+		height: 48, width:48, top: 5, left:10
+	});
+	
 	var personText = Ti.UI.createLabel({
 		text: receipt.person.charAt(0), top:5, color:"#fff", left:0, right:0,
 		textAlign:'center',
 		font: {fontSize: 32, fontWeight:"bold"}
 	});
 	
-	personView.add(personText);
+	//personView.add(categoryImage);
 	
 	detailView.add(category);
 	detailView.add(total);
 	detailView.add(date);
+	//rowView.add(detailView);
+	//rowView.add(personView);
+	//row.add(rowView);
 	rowView.add(detailView);
-	rowView.add(personView);
 	row.add(rowView);
+	row.add(categoryImage);
 	
 	return row;
 }

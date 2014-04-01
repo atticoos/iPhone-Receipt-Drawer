@@ -151,14 +151,14 @@ function LocationSection ( offset ){
 		FoursquareService = require('dal/Foursquare'),
 		Foursquare = new FoursquareService(),
 		self = this,
-		venue = false,
 		coords = {latittude: false, longitude: false};
+	this.venue = false;
 	
 	this.view = Ti.UI.createView({
 		backgroundColor: "#fff",
 		borderRadius: 0,
 		left:10, right:10,
-		top: offset + 20,
+		top: offset + 60,
 		height: 300
 	});
 	
@@ -199,7 +199,7 @@ function LocationSection ( offset ){
 	
 	function venueSelected( venue ){
 		Ti.API.info("VENUE SELECTED", venue);
-		this.venue = venue;
+		self.venue = venue;
 		pin.title = venue.name;
 		pin.latitude = venue.location.lat;
 		pin.longitude = venue.location.lng;
@@ -231,7 +231,7 @@ function LocationSection ( offset ){
 	this.getLocation = function(){
 		return coords;
 	};
-	
+
 	this.view.add(locationLabel);
 	this.view.add(buttonBar);
 	this.view.add(mapView);

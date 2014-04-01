@@ -9,13 +9,13 @@ function install(){
 
 function create( venue ){
 	var db = Ti.Database.open(DATABASE_NAME);
-	db.execute("INSERT INTO venues (name, lat, lng, foursquareID, foursquareCategory, foursquareIcon) VALUES (?,?,?,?,?,?) ",
+	db.execute("INSERT INTO venues (name, lat, lng, foursquareID, category, icon) VALUES (?,?,?,?,?,?) ",
 		venue.name,
 		venue.location.lat,
 		venue.location.lng,
 		venue.id,
-		venue.location.categories[0].shortName,
-		venue.location.categories[0].icon);
+		venue.categories[0].shortName,
+		venue.categories[0].icon);
 	var insertID = db.lastInsertRowId;
 	db.close();
 	return insertID;

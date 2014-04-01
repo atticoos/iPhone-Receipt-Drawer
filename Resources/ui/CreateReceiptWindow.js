@@ -125,12 +125,14 @@ function CreateWindow(){
 		navActInd.show();
 	
 		var Receipt = require('entities/receipt');
+			
 		var receipt = {
 			name: ReceiptWindow.nameSection.nameField.value,
 			total: ReceiptWindow.totalSection.totalField.value,
 			category: ReceiptWindow.categorySection.categoryPicker.getSelectedRow(0).id,
 			date: new Date(ReceiptWindow.dateSection.datePicker.getValue()),
-			person: ReceiptWindow.personSection.getSelectedPerson() //"A" //ReceiptWindow.personSection.picker.getSelectedRow(0).title
+			person: ReceiptWindow.personSection.getSelectedPerson(),
+			venue: ReceiptWindow.locationSection.venue
 		};
 		
 		if ( ReceiptWindow.photoSection.image ){
@@ -151,7 +153,7 @@ function CreateWindow(){
 	
 	
 	return win;
-}
+};
 
 
 
@@ -161,4 +163,4 @@ function CreateWindow(){
 module.exports = {
 	create: CreateWindow,
 	edit: EditWindow
-}
+};

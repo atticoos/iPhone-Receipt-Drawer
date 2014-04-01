@@ -6,3 +6,5 @@ function Venue( properties ){
 	this.category = properties.category;
 	this.icon = properties.icon;	
 }
+
+module.exports = Venue;

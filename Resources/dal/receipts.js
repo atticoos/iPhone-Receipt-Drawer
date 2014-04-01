@@ -24,15 +24,21 @@ function getReceipts( category ){
 		
 	if (category){
 		rows = db.execute(
-			"SELECT R.*, C.id AS categoryID, C.name AS categoryName " +
+			"SELECT R.*, C.id AS categoryID, C.name AS categoryName, " +
 			"V.id AS venueID, V.name AS venueName, V.lat AS venueLat, V.lng AS venueLng, V.category AS venueCategory, V.icon AS venueIcon " +
 			"FROM receipts R " +
 			"JOIN categories C ON R.category = C.id " +
-			"JOIN venues V ON R.venue = V.id " +
+			"LEFT JOIN venues V ON R.venue = V.id " +
 			"WHERE R.category = ? " +
 			"ORDER BY date DESC", category);
 	} else {
-		rows = db.execute("SELECT R.*, C.id AS categoryID, C.name AS categoryName FROM receipts R JOIN categories C ON R.category = C.id ORDER BY date DESC");
+		rows = db.execute(
+			"SELECT R.*, C.id AS categoryID, C.name AS categoryName, " +
+			"V.id AS venueID, V.name AS venueName, V.lat AS venueLat, V.lng AS venueLng, V.category AS venueCategory, V.icon AS venueIcon " +
+			"FROM receipts R " +
+			"JOIN categories C ON R.category = C.id " + 
+			"LEFT JOIN venues V ON R.venue = V.id " + 
+			"ORDER BY date DESC");
 	}
 
 	while (rows.isValidRow()){
@@ -50,7 +56,7 @@ function getReceipts( category ){
 			venue: {
 				id: rows.fieldByName('venueID'),
 				name: rows.fieldByName('venueName'),
-				lat: rows.fieldByName('venueLast'),
+				lat: rows.fieldByName('venueLat'),
 				lng: rows.fieldByName('venueLng'),
 				category: rows.fieldByName('venueCategory'),
 				icon: rows.fieldByName('venueIcon')
@@ -87,14 +93,18 @@ function getReceiptGroupList(){
 
 
 function createReceipt(receipt){
-	var db = Ti.Database.open(DATABASE_NAME);
-	db.execute("INSERT INTO receipts (name, total, date, category, image, person) values (?,?,?,?,?,?)", 
+	var db = Ti.Database.open(DATABASE_NAME),
+		VenueService = require('dal/venues');
+	
+	var venueID = VenueService.create(receipt.venue);
+	db.execute("INSERT INTO receipts (name, total, date, category, image, person, venue) values (?,?,?,?,?,?,?)", 
 		receipt.name, 
 		receipt.total, 
 		receipt.date, 
 		receipt.category,
 		receipt.image,
-		receipt.person
+		receipt.person,
+		venueID
 	);
 	db.close();
 }
