@@ -6,6 +6,27 @@ function Foursquare(){
 	
 };
 
+
+Foursquare.prototype.searchBounds = function(sw, ne, search, callback){
+	var params = {
+		sw: sw.latitude + "," + sw.longitude,
+		ne: ne.latitude + "," + ne.longitude,
+		query: search,
+		intent: 'browse'
+	};
+	return this.makeRequest('venues/search', params, callback);
+}
+
+Foursquare.prototype.getVenuePhotos = function( venueID, callback ){
+	//https://api.foursquare.com/v2/venues/VENUE_ID/photos
+	return this.makeRequest('venues/' + venueID + '/photos', {}, callback);
+}
+
+Foursquare.prototype.searchVenues = function(lat, lng, search, callback){
+	var params = {ll: lat + "," + lng, query: search};
+	return this.makeRequest("venues/search", params, callback);
+};
+
 Foursquare.prototype.getVenues = function(lat, lng, callback){
 	var ll = {ll: lat + "," + lng};
 	return this.makeRequest("venues/search", ll, callback);
@@ -26,7 +47,7 @@ Foursquare.prototype.makeRequest = function(endpoint, params, callback){
 	
 	var xhr = Ti.Network.createHTTPClient();
 	xhr.onerror = function(e){
-		Ti.API.info("XHR ERROR", e.error);
+		Ti.API.info("XHR ERROR", e);
 		alert(e.error);
 		callback( false );
 	};

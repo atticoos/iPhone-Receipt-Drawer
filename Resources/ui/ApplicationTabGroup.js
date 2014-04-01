@@ -13,12 +13,14 @@ function ApplicationTabGroup() {
 	var self = Ti.UI.createTabGroup(),
 		ListWindow = require('ui/ListReceiptGroupsWindow'),
 		DevWindow = require('ui/DevWindow'),
-		SettingsWindow = require('ui/SettingsWindow');
+		SettingsWindow = require('ui/SettingsWindow'),
+		WorkflowWindow = require('ui/CreateReceiptWorkflow/StepOne');
 		
 	//create app tabs
 	var win1 = new ListWindow(),
 		win2 = new DevWindow(),
-		win3 = new SettingsWindow();
+		win3 = new SettingsWindow(),
+		win4 = new WorkflowWindow();
 		//win3 = new CameraWindow();
 		
 		
@@ -43,9 +45,18 @@ function ApplicationTabGroup() {
 	});
 	win3.containingTab = tab3;
 	
+	var tab4 = Ti.UI.createTab({
+		title: 'Workflow',
+		icon: 'images/KS_nav_views.png',
+		window: win4
+	});
+	win4.containingTab = tab4;
+	win4.tabGroup = self;
+	
 	self.addTab(tab1);
 	self.addTab(tab2);
 	self.addTab(tab3);
+	self.addTab(tab4);
 	
 	
 	return self;

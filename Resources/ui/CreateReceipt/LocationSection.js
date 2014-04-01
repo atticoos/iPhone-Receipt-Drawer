@@ -21,7 +21,7 @@ function MapOverlay( venueSelectCallback ){
 	});
 	
 	var searchField = Ti.UI.createTextField({
-		height: 20, width: 200, color:"#000", paddingLeft:5,backgroundColor:"#fff",
+		height: 25, width: 200, color:"#000", paddingLeft:5,backgroundColor:"#fff",
 		font: { fontSize: 13 }
 	});
 	var flexSpace = Ti.UI.createButton({
