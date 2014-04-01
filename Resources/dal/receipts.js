@@ -1,5 +1,4 @@
 var DATABASE_NAME = 'main';
-var categories = ['Food', 'Groceries', 'Rent', 'Utilities', 'Other'];
 
 
 function install(){
@@ -7,17 +6,34 @@ function install(){
 	Ti.API.info("Creating database...");
 	//db.execute("DROP TABLE receipts");
 	db.execute("DROP TABLE IF EXISTS receipts");
-	db.execute("CREATE TABLE IF NOT EXISTS receipts (id INTEGER PRIMARY KEY, name TEXT, total NUMERIC, category INTEGER, date TEXT, image TEXT, person TEXT, FOREIGN KEY(category) REFERENCES categories(id))");
+	db.execute("CREATE TABLE IF NOT EXISTS receipts (id INTEGER PRIMARY KEY, name TEXT, total NUMERIC, category INTEGER, date TEXT, image TEXT, person TEXT, venue INTEGER, FOREIGN KEY(category) REFERENCES categories(id), FOREIGN KEY (venue) REFERENCES venues(id))");
 }
 //install();
 
 
-function getReceipts(){
+function getAllReceipts(){
+	return getReceipts( false );
+}
+
+function getReceipts( category ){
 	var db = Ti.Database.open(DATABASE_NAME),
 		Receipt = require('entities/receipt'),
-		receipts = [];
-	var rows = db.execute("SELECT R.*, C.id AS categoryID, C.name AS categoryName FROM receipts R JOIN categories C ON R.category = C.id ORDER BY date DESC");
-	
+		ReceiptGroup = require('entities/ReceiptGroup'),
+		receipts = [],
+		rows;
+		
+	if (category){
+		rows = db.execute(
+			"SELECT R.*, C.id AS categoryID, C.name AS categoryName " +
+			"V.id AS venueID, V.name AS venueName, V.lat AS venueLat, V.lng AS venueLng, V.category AS venueCategory, V.icon AS venueIcon " +
+			"FROM receipts R " +
+			"JOIN categories C ON R.category = C.id " +
+			"JOIN venues V ON R.venue = V.id " +
+			"WHERE R.category = ? " +
+			"ORDER BY date DESC", category);
+	} else {
+		rows = db.execute("SELECT R.*, C.id AS categoryID, C.name AS categoryName FROM receipts R JOIN categories C ON R.category = C.id ORDER BY date DESC");
+	}
 
 	while (rows.isValidRow()){
 		receipts.push(new Receipt({
@@ -30,18 +46,43 @@ function getReceipts(){
 			category: {
 				id: rows.fieldByName('categoryID'),
 				name: rows.fieldByName('categoryName')
+			},
+			venue: {
+				id: rows.fieldByName('venueID'),
+				name: rows.fieldByName('venueName'),
+				lat: rows.fieldByName('venueLast'),
+				lng: rows.fieldByName('venueLng'),
+				category: rows.fieldByName('venueCategory'),
+				icon: rows.fieldByName('venueIcon')
 			}
 		}));
 		rows.next();
 	}
 	db.close();
-	Ti.API.info("DATA", receipts);
-	return receipts;
+	Ti.API.log("getReceipts()", receipts);
+	return new ReceiptGroup(receipts);
 }
 
 
-function getCategories() {
-	return categories;
+function getReceiptGroupList(){
+	var db = Ti.Database.open(DATABASE_NAME),
+		ReceiptGroupAggregate = require('entities/ReceiptGroupAggregate'),
+		ReceiptGroups = require('entities/ReceiptGroups'),
+		results = [];
+	
+	var rows = db.execute("SELECT C.id AS categoryID, C.name AS categoryName, COUNT(1) as receiptCount, SUM(total) AS receiptTotal FROM receipts R JOIN categories C ON R.category = C.id GROUP BY R.category");
+	
+	while(rows.isValidRow()){
+		results.push(new ReceiptGroupAggregate({
+			id: rows.fieldByName('categoryID'),
+			name: rows.fieldByName('categoryName'),
+			total: rows.fieldByName('receiptTotal'),
+			count: rows.fieldByName('receiptCount')
+		}));
+		rows.next();
+	}
+	db.close();
+	return new ReceiptGroups(results);
 }
 
 
@@ -97,11 +138,11 @@ function dumpDB(){
 
 module.exports = {
 	createReceipt: createReceipt,
-	getCategories: getCategories,
+	getAllReceipts: getAllReceipts,
 	getReceipts: getReceipts,
 	deleteReceipt: deleteReceipt,
 	updateReceipt: updateReceipt,
-	
+	getReceiptGroupList: getReceiptGroupList,
 	
 	// DEV TOOLS
 	dumpDB: dumpDB,

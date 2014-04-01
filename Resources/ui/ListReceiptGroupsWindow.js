@@ -6,7 +6,6 @@ function ApplicationWindow(title) {
 	
 
 	var tableView = Ti.UI.createTableView({
-		editable: true,
 		left:0, right:0,
 		separatorStyle: Titanium.UI.iPhone.TableViewSeparatorStyle.NONE,
 		backgroundColor:"#eee"
@@ -43,9 +42,9 @@ function ApplicationWindow(title) {
 	
 	
 	tableView.addEventListener('click', function(e){
-		var ViewReceiptWindow = require('ui/ViewReceiptWindow'),
+		var ViewReceiptWindow = require('ui/ListReceiptWindow'),
 			receiptWin = new ViewReceiptWindow({ 
-				receipt: e.rowData.receipt,
+				receiptGroup: e.rowData.receipt,
 				containingTab: win.containingTab,
 				tabGroup: win.tabGroup
 			});
@@ -66,80 +65,26 @@ function ApplicationWindow(title) {
 	return win;
 };
 
+
+
 function getTableData(){
 	var data = [],
-		receipts = require('dal/receipts').getReceipts();
-	for (var i=0; i<receipts.length; i++){
-		var receipt = receipts[i];
-		var row = Ti.UI.createTableViewRow({
-			id: receipt.id,
-			receipt: receipt,
-			left:0, right:0,
-			height: 60
-		});
+		ReceiptGroupRow = require('ui/misc/ReceiptGroupRow'),
+		receiptGroups = require('dal/receipts').getReceiptGroupList();
+	
+	
+	for (var i=0; i<receiptGroups.groups.length; i++){
+		var receipt = receiptGroups.groups[i];
 		
-		var rowView = Ti.UI.createView({
-			left: 5, right: 5, top:5, bottom:5,
-			backgroundColor:"#fff"
-		});
-		
-		var detailView = Ti.UI.createView({
-			left: 60, top:5, bottom:5, right: 10
-		});
-		
-		
-		var title = Ti.UI.createLabel({
-			text: receipt.name,
-			left:0, top:0, color:'#000',
-			font: { fontSize: 14}
-		});
-		
-		var category = Ti.UI.createLabel({
-			text: receipt.category.name,
-			top:0, right:0, 
-			font: { fontSize: 12 },
-			color:'#C0C0C0'
-		});
-		
-		var total = Ti.UI.createLabel({
-			text: "$" + receipt.total,
-			bottom:0, left:0,
-			font: { fontSize: 12 },
-			color:"#C0C0C0"
-		});
-		
-		var date = Ti.UI.createLabel({
-			text: receipt.getDateString(),
-			bottom:0, right: 0,
-			font: { fontSize: 12 },
-			color:"#C0C0C0"
-		});
-		
-		var personView = Ti.UI.createView({
-			top:0,left:0,height:60,width:55,
-			backgroundColor:"pink"
-		});
-		
-		var personText = Ti.UI.createLabel({
-			text: receipt.person.charAt(0), top:5, color:"#fff", left:0, right:0,
-			textAlign:'center',
-			font: {fontSize: 32, fontWeight:"bold"}
-		});
-		
-		personView.add(personText);
-		
-		detailView.add(title);
-		detailView.add(category);
-		detailView.add(total);
-		detailView.add(date);
-		rowView.add(detailView);
-		rowView.add(personView);
-		row.add(rowView);
-		
+		var row = new ReceiptGroupRow(receipt);
 		
 		
 		data.push(row);
 	}
+	
+	var allRow = new ReceiptGroupRow(receiptGroups.getAll());
+	data.unshift(allRow);
+	
 	return data;
 }
 

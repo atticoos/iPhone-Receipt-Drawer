@@ -1,14 +1,17 @@
 function ApplicationTabGroup() {
-/*
+	
+	/*
+	var VenueService = require('dal/venues');
 	var ReceiptService = require('dal/receipts');
 	var CategoryService = require('dal/categories');
+	VenueService.install();
 	ReceiptService.install();
 	CategoryService.install();
-*/
-
+	*/
+	
 	//create module instance
 	var self = Ti.UI.createTabGroup(),
-		ListWindow = require('ui/ListReceiptsWindow'),
+		ListWindow = require('ui/ListReceiptGroupsWindow'),
 		DevWindow = require('ui/DevWindow'),
 		SettingsWindow = require('ui/SettingsWindow');
 		

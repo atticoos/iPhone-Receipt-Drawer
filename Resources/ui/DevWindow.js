@@ -49,6 +49,18 @@ function ApplicationWindow(){
 	view.add(installDB);
 	
 	
+	var testButton = Ti.UI.createButton({
+		title: 'Test button',
+		top: 90, 
+		left: 20, right:20,
+		height:30
+	});
+	testButton.addEventListener('click', function(){
+		var receipts = require('dal/receipts');
+		receipts.getReceiptGroupList();
+	});
+	view.add(testButton);
+	
 	win.add(view);
 	
 	return win;
